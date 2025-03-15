@@ -51,7 +51,7 @@ def add_stock(request):
     else:
         form = StockItemForm()
 
-    return render(request, 'inventory/add_product.html', {'form': form})
+    return render(request, 'inventory/add_stock.html', {'form': form})
 
 def update_price(request, item_id):
     item = get_object_or_404(StockItem, id=item_id)

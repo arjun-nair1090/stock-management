@@ -46,3 +46,8 @@ class StockItem(BaseProduct):
         """Static method to search products."""
         return StockItem.objects.filter(name__icontains=query)
 
+class Category(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
