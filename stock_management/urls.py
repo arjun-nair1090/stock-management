@@ -16,11 +16,14 @@ Including another URLconf
 """
 from django.urls import path
 from inventory.views import stock_list, update_stock, delete_stock_item, add_stock
-from inventory.views import update_price 
+from inventory.views import update_price, login_view, signup_view, home
 
 urlpatterns = [
-    path('', stock_list, name='stock_list'),
-    path('update_stock/<int:pk>/', update_stock, name='update_stock'),
+    path('', home, name='home'),
+    path('login/', login_view, name='login'),
+    path('signup/', signup_view, name='signup'),
+    path('list', stock_list, name='stock_list'),
+    path('update_stock/<int:item_id>/', update_stock, name='update_stock'),
     path('delete/<int:item_id>/', delete_stock_item, name='delete_stock_item'),
     path('add/', add_stock, name='add_stock'),
     path('update-price/<int:item_id>/', update_price, name='update_price'),

@@ -22,3 +22,24 @@ class UpdatePriceForm(forms.ModelForm):
     class Meta:
         model = StockItem
         fields = ['price']
+
+#Login
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm
+
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(max_length=100, label="Username")
+    password = forms.CharField(widget=forms.PasswordInput, label="Password")
+
+#Sign up
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+class SignupForm(UserCreationForm):
+    email = forms.EmailField(required=True, label="Email")
+    first_name = forms.CharField(max_length=100, label="First Name", required=True)
+    last_name = forms.CharField(max_length=100, label="Last Name", required=True)
+
+    class Meta:
+        model = User
+        fields = ["username", "first_name", "last_name", "email", "password1", "password2"]

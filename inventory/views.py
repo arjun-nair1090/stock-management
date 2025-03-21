@@ -65,3 +65,55 @@ def update_price(request, item_id):
     
     return render(request, 'inventory/update_price.html', {'form': form, 'item': item})
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate
+from django.contrib import messages
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'You have logged in successfully!')
+                return redirect('stock_list')
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            messages.error(request, 'Invalid username or password.')
+
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'inventory/login.html', {'form': form})
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib import messages
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Your account has been created successfully!')
+            return redirect('stock_list')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = UserCreationForm()
+    
+    return render(request, 'inventory/signup.html', {'form': form})
+
+
+def home(request):
+    return render(request, 'inventory/home.html')
