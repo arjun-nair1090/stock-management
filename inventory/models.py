@@ -2,7 +2,7 @@ from django.db import models
 
 # Parent class to avoid duplicate fields
 class BaseProduct(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     category = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -51,3 +51,23 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+from django.db import models
+from django.core.exceptions import ValidationError
+from django.contrib import messages
+
+class StockItem(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    category = models.CharField(max_length=50)
+    quantity = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    def clean(self):
+        if self.price < 0:
+            raise ValidationError("Price cannot be negative.")
+    def save(self, *args, **kwargs):
+        self.full_clean()  # This ensures validation is run before saving
+        super().save(*args, **kwargs)
+    
+
+

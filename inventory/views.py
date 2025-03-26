@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import StockItem, Category
 from django.contrib import messages
 from .forms import UpdateStockForm, StockItemForm, UpdatePriceForm
-from .forms import UpdatePriceForm
+from .exceptions import DuplicateProductError
+
 
 def stock_list(request):
     """Show all stock items."""
@@ -39,15 +40,25 @@ def delete_stock_item(request, item_id):
     return redirect('stock_list')  # Redirect to stock list page after deletion
 
 def add_stock(request):
+    error_message = None
     if request.method == "POST":
         form = StockItemForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Product added successfully!")
-            return redirect('stock_list')
-        else:
-            messages.error(request, "Invalid data entered.")
-    
+            name = form.cleaned_data.get('name')  # ✅ FIX: Get 'name' properly
+
+            # ✅ Check for duplicate product name
+            if StockItem.objects.filter(name=name).exists():  # Check if product exists
+                try:
+                    raise DuplicateProductError(f"Product '{name}' already exists!")
+                except DuplicateProductError as e:
+                    error_message = str(e)  # Store the error message
+
+            else:
+                form = StockItemForm(request.POST)
+                if form.is_valid():
+                    form.save()
+                    return redirect("stock_list")
+        
     else:
         form = StockItemForm()
 

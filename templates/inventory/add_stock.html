@@ -39,7 +39,10 @@
 </head>
 <body>
     <h2>Add New Stock Item</h2>
-
+    
+    {% if error_message %}
+        <p style="color: red; font-weight: bold;">{{ error_message }}</p>
+    {% endif %}
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
